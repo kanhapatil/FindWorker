@@ -1,0 +1,23 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+@media screen and (max-width: 440px) {
+  .container {
+    margin-top: 6rem;
+  }
+}
+
+
+.test {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
