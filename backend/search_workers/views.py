@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends, status, Query
 from typing import Optional
+from fastapi.responses import JSONResponse
 from mysql.connector import connection
 
 from database import get_db
@@ -103,28 +104,29 @@ async def search_workers(
 ):
     cursor = db.cursor(dictionary=True)
     
-    # Get current user city
+    # Get current user city 
     cursor.execute("SELECT city FROM profile WHERE user_id = %s", (current_user["id"],))
     curr_user_result = cursor.fetchone()
     
+
     # Base query to get distinct workers
     get_workers_query = """
         SELECT 
-            users.id AS user_id,
-            users.email,
-            profile.first_name,
-            profile.last_name,
-            profile.gender,
-            profile.phone_number,
-            profile.city
-        FROM 
-            users 
-        JOIN 
-            profile ON users.id = profile.user_id 
-        JOIN 
-            worker ON profile.id = worker.profile_id 
-        JOIN 
-            working_area_info ON worker.id = working_area_info.worker_id
+        users.id AS user_id,
+        users.email,
+        MIN(profile.first_name) AS first_name,
+        MIN(profile.last_name) AS last_name,
+        MIN(profile.gender) AS gender,
+        MIN(profile.phone_number) AS phone_number,
+        MIN(profile.city) AS city
+    FROM 
+        users 
+    JOIN 
+        profile ON users.id = profile.user_id 
+    JOIN 
+        worker ON profile.id = worker.profile_id 
+    JOIN 
+        working_area_info ON worker.id = working_area_info.worker_id
     """
 
     # List to store filters 
@@ -160,7 +162,7 @@ async def search_workers(
     
     cursor.execute(get_workers_query)
     workers = cursor.fetchall()
-
+    
     # If no workers are found, return an empty list
     if not workers:
         return []
@@ -169,12 +171,11 @@ async def search_workers(
     worker_ids = [worker['user_id'] for worker in workers]
         
     # Call get_working_area_info() function to get the workers working areas informations
-    working_areas = await get_working_area_info(cursor, worker_ids)
+    working_areas = get_working_area_info(cursor, worker_ids)
         
     # Call serialize_workers() function to format the results
-    result = await serialize_workers(working_areas)
+    result = serialize_workers(working_areas)
     
     # Return the list of workers with their respective working areas
     return list(result.values()) 
-    
     

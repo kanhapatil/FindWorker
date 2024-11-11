@@ -8,16 +8,37 @@
   box-sizing: border-box;
 }
 
-@media screen and (max-width: 440px) {
-  .container {
-    margin-top: 6rem;
-  }
+body {
+  background: #F3F4F6;
 }
 
+html, body {
+  overflow-y: scroll; /* Allows scrolling on the page */
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+}
 
-.test {
+html::-webkit-scrollbar, body::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, and Edge */
+}
+
+.container {
+  height: 100vh;
+}
+
+.contactDiv {
   height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.fetchLocationBtn {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.pointer {
+  cursor: pointer;
 }

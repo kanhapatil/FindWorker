@@ -36,3 +36,9 @@ class ProfileUpdate(BaseModel):
     longitude: Optional[str]
     latitude: Optional[str]
     role: Optional[RoleEnum]
+    
+    
+class Contact(BaseModel):
+    email: EmailStr
+    subject: str
+    message: str

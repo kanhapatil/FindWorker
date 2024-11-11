@@ -4,13 +4,14 @@ import { Link } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import userService from "../services/userService";
-import SubmitButton from "../components/SubmitButton";
+import SubmitButton from "../components/buttons/SubmitButton";
 
 
 const Signup = () => {
   const {
     register,
     handleSubmit,
+    reset,
     watch,
     formState: { errors, isSubmitting },
   } = useForm();
@@ -23,6 +24,7 @@ const Signup = () => {
       const response = await userService.signup(data);
       if (response.status === 201) {
         toast.success(response.data.detail);
+        reset();
       } else {
         toast.error(response.data.detail);
       }
@@ -38,8 +40,8 @@ const Signup = () => {
   return (
     <>
       <ToastContainer />
-      <section className="container bg-gray-50 dark:bg-gray-900">
-        <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
+      <section className="dark:bg-gray-900">
+        <div className="container flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
           <div className="w-full bg-white rounded-lg shadow dark:border sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
             <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
               <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
@@ -134,7 +136,7 @@ const Signup = () => {
                     <input
                       id="terms"
                       type="checkbox"
-                      className="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-indigo-600 checked:bg-indigo-600 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-indigo-600 dark:ring-offset-gray-800 test"
+                      className="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-indigo-600 checked:bg-indigo-600 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-indigo-600 dark:ring-offset-gray-800"
                       {...register("terms", {
                         required: "You must accept the terms and conditions!",
                       })}

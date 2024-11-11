@@ -58,10 +58,7 @@ def insert_profile(cursor, user_id: int, data):
             data.latitude,
         ),
     )
-    return (
-        cursor.lastrowid,
-        cursor.rowcount,
-    )  # Return new profile ID and row count for success check
+    return cursor.rowcount
 
 
 ## Helper function to fetch user profile
@@ -99,3 +96,11 @@ def switch_user_role(cursor, current_user, role):
         "UPDATE profile SET role = %s WHERE user_id = %s",
         (role, current_user["id"]),
     )
+
+
+def create_message(cursor, data):
+    cursor.execute(
+        "INSERT INTO contact (email, subject, message) VALUES(%s, %s, %s)",
+        (data.email, data.subject, data.message),
+    )
+    return cursor.rowcount

@@ -1,50 +1,44 @@
-import React from "react";
 import { useForm } from "react-hook-form";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import SubmitButton from "../components/SubmitButton";
-import authService from "../services/authService";
+import SubmitButton from "../components/buttons/SubmitButton";
+import useAuth from "../hooks/useAuth";
 
 
 const Signin = () => {
-    const {
-        register,
-        handleSubmit,
-        formState: {errors, isSubmitting}
-    } = useForm()
-
-    async function onSubmit(data) {
-        try {
-            const response = await authService.login(data);
-            if (response.status === 200){                
-                toast.success(response.data.detail)
-                localStorage.setItem("access_token", response.data.access_token)
-            }else{
-                toast.error(response.data.detail)
-            }
-            
-        } catch (error) {
-            if (error.response.status === 404){
-                toast.warning(error.response.data.detail)
-            }else if (error.response.status === 401) {
-                toast.warn(error.response.data.detail)
-            }else {
-                toast.error(response.data.detail)
-            }
-        }
+  const {register, handleSubmit, formState: { errors, isSubmitting }} = useForm();
+  const { login } = useAuth(); 
+  const navigate = useNavigate();
+  
+  const onSubmit = async (data) => {
+    const result = await login(data); 
+  
+    if (result !== true) { 
+      if (result.status === 404 || result.status === 401) {
+        toast.warning(result.detail);
+      } else {
+        toast.error(result.detail);
+      }
+    } else {
+      navigate("/profile/");
     }
+  };
+  
   return (
     <>
       <ToastContainer />
-      <section className="container bg-gray-50 dark:bg-gray-900">
-        <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
+      <section className="dark:bg-gray-900">
+        <div className="container flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
           <div className="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
             <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
               <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
                 Sign in to your account
               </h1>
-              <form className="space-y-4 md:space-y-6" onSubmit={handleSubmit(onSubmit)}>
+              <form
+                className="space-y-4 md:space-y-6"
+                onSubmit={handleSubmit(onSubmit)}
+              >
                 <div>
                   <label
                     htmlFor="email"
@@ -85,7 +79,7 @@ const Signin = () => {
                     placeholder="••••••••"
                     className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     {...register("password", {
-                        required: "Password is required!"
+                      required: "Password is required!",
                     })}
                   />
                   {errors.password && (
@@ -94,6 +88,7 @@ const Signin = () => {
                     </p>
                   )}
                 </div>
+
                 <div className="flex items-center justify-between">
                   <div className="flex items-start">
                     <div className="flex items-center h-5">
@@ -120,7 +115,7 @@ const Signin = () => {
                     Forgot password?
                   </a>
                 </div>
-                
+
                 {/* Include SubmitButton component */}
                 <SubmitButton isSubmitting={isSubmitting} text={"Sign in"} />
 
